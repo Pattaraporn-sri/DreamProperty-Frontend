@@ -1,0 +1,33 @@
+/* ปรับขนาดและสีของปุ่มกากบาท */
+.maplibregl-popup-close-button {
+    width: 40px;  /* ขนาดความกว้าง */
+    height: 30px; /* ขนาดความสูง */
+    border-radius: 50%; /* ทำให้ปุ่มเป็นวงกลม */
+    font-size: 20px;  /* ขนาดของสัญลักษณ์ X */
+    color: rgb(21, 20, 20);  /* สีของสัญลักษณ์ X */
+    border: none; /* เอาขอบออก */
+    padding: 5px;
+    /* text-decoration:solid; */
+  }
+  
+  /* เมื่อวางเมาส์เหนือปุ่มกากบาท */
+  .maplibregl-popup-close-button:hover {
+    color: #787776; /* สีพื้นหลังเมื่อ hover */
+  }
+
+  .mapboxgl-ctrl-top-right {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+  }
+
+  .mapboxgl-ctrl-zoom-in,
+.mapboxgl-ctrl-zoom-out {
+  background-color: #ff5733; /* ตัวอย่างการเปลี่ยนสีปุ่ม */
+  border-radius: 50%; /* ปรับขอบของปุ่มให้กลม */
+  padding: 8px;
+}
+.mapboxgl-ctrl-compass {
+  background-color: #4CAF50; /* เปลี่ยนสีของปุ่มการหมุน */
+}
