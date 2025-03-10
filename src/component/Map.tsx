@@ -17,7 +17,6 @@ const Map: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<string>("ทั้งหมด");
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
-  const [map, setMap] = useState<maplibregl.Map | null>(null);
   const [markers, setMarkers] = useState<maplibregl.Marker[]>([]);
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // ใช้ ref เก็บ div
   const [open, setOpen] = useState(false);
@@ -33,7 +32,6 @@ const Map: React.FC = () => {
     const fetchProperties = async () => {
       try {
         const response = await axios.get("http://localhost:3002/properties");
-        console.log("Fetched properties:", response.data);
         setProperties(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);

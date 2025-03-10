@@ -22,8 +22,7 @@ import { Button, Popover } from "antd";
 import ruler from "../img/icons8-ruler-48.png";
 import bedroom from "../img/icons8-bedroom-48.png";
 import bathtub from "../img/icons8-bathtub-32.png";
-import { Skeleton } from 'antd';
-
+import { Skeleton } from "antd";
 
 const HomePage: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -54,10 +53,6 @@ const HomePage: React.FC = () => {
     setOpenPopoverId(newOpen ? id : null);
   };
 
-  const hide = () => {
-    setOpenPopoverId(null);
-  };
-
   //ฟังก์ชันดึงข้อมู,จาก API
   useEffect(() => {
     const fetchProperties = async () => {
@@ -75,7 +70,12 @@ const HomePage: React.FC = () => {
     fetchProperties();
   }, []);
 
-  if (loading) return <h2><Skeleton/></h2>;
+  if (loading)
+    return (
+      <h2>
+        <Skeleton />
+      </h2>
+    );
   if (error) return <h2>{error}</h2>;
 
   return (
@@ -159,10 +159,7 @@ const HomePage: React.FC = () => {
             // แสดงแค่รูปแรก
             const firstImage = images[0];
 
-            const handleFavoriteClick = (
-              e: React.MouseEvent<HTMLElement>,
-              id: string
-            ) => {
+            const handleFavoriteClick = (e: React.MouseEvent<HTMLElement>) => {
               e.preventDefault(); // ป้องกันไม่ให้ event bubble ไปที่ Popover
 
               const isFavorited = favorites[property.รหัสทรัพย์]; // ตรวจสอบสถานะปัจจุบัน
@@ -201,9 +198,7 @@ const HomePage: React.FC = () => {
                           }
                         >
                           <Button
-                            onClick={(e) =>
-                              handleFavoriteClick(e, property.รหัสทรัพย์)
-                            }
+                            onClick={(e) => handleFavoriteClick(e)}
                             className="bg-slate-200 w-12 h-12 p-1 ml-[340px] mt-5 text-3xl absolute rounded-full hover:scale-95"
                           >
                             {favorites[property.รหัสทรัพย์] ? (
@@ -259,7 +254,6 @@ const HomePage: React.FC = () => {
         </p>
         <div className="mt-10 ml-44 ">
           {randomRecommendProperties.map((item, index) => {
-            console.log("Recommend Properties:", randomRecommendProperties);
             // แยก URL ของรูปภาพออกจากกันโดยใช้ ** หรือ *** เป็นตัวแบ่ง
             const images = item.image
               .split(/\*\*+|\*\*\*+/)
@@ -269,10 +263,7 @@ const HomePage: React.FC = () => {
             // แสดงแค่รูปแรก
             const firstImage = images[0];
 
-            const handleFavoriteClick = (
-              e: React.MouseEvent<HTMLElement>,
-              id: string
-            ) => {
+            const handleFavoriteClick = (e: React.MouseEvent<HTMLElement>) => {
               e.preventDefault(); // ป้องกันไม่ให้ event bubble ไปที่ Popover
 
               const isFavorited = favorites[item.รหัสทรัพย์]; // ตรวจสอบสถานะปัจจุบัน
@@ -307,9 +298,7 @@ const HomePage: React.FC = () => {
                       handleOpenChange(item.รหัสทรัพย์, newOpen)
                     }
                   >
-                    <button
-                      onClick={(e) => handleFavoriteClick(e, item.รหัสทรัพย์)}
-                    >
+                    <button onClick={(e) => handleFavoriteClick(e)}>
                       {favorites[item.รหัสทรัพย์] ? (
                         <HeartFilled style={{ color: "red" }} /> // ถ้าคลิกแล้วให้แสดง HeartFilled เป็นสีแดง
                       ) : (

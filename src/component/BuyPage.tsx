@@ -23,7 +23,6 @@ const PropertyList: React.FC = () => {
     const fetchProperties = async () => {
       try {
         const apiUrl = "http://localhost:3002/properties";
-        console.log("Fetching from:", apiUrl);
         const response = await fetch(apiUrl);
 
         if (!response.ok) {
@@ -31,7 +30,6 @@ const PropertyList: React.FC = () => {
         }
 
         const data = await response.json();
-        console.log("API Response:", data);
         setBuys(data);
       } catch (error) {
         console.error("API Error:", error);

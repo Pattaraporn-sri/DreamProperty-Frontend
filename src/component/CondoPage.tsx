@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Property } from "./Type";
 import { Link, useNavigate } from "react-router-dom";
-import { Breadcrumb, Divider, Popover } from "antd";
+import { Breadcrumb, Popover } from "antd";
 import { HeartFilled, HeartOutlined, HomeOutlined } from "@ant-design/icons";
 import condo from "../img/icons8-condo-50.png";
 import { useFavorites } from "./FavoriteContext";
@@ -20,7 +20,6 @@ const PropertyList: React.FC = () => {
     fetch("http://localhost:3002/properties")
       .then((response) => response.json())
       .then((data) => {
-        console.log("API response data:", data);
 
         //ตรวจสอบว่า data ไม่เป็น null หรือ undefined และมีข้อมูลที่เป็น array
         if (data && Array.isArray(data)) {
@@ -28,7 +27,6 @@ const PropertyList: React.FC = () => {
             (house: { ประเภท: string }) => house.ประเภท === "คอนโด"
           );
 
-          console.log("Filtered Condos:", filteredCondos);
           setCondos(filteredCondos);
         } else {
           console.error("Invalid data received from API");

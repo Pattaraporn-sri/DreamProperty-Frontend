@@ -103,8 +103,6 @@ const PropertyDetail = () => {
   const [error, setError] = useState<string | null>(null);
   const { favorites, toggleFavorite } = useFavorites(); // สถานะเพื่อเช็คว่ากดหรือไม่
   const [openPopoverId, setOpenPopoverId] = useState<string | null>(null); // ใช้ string แทน boolean
-  const [agents, setAgents] = useState<any[]>([]); //สถานะข้อมูลนายหน้า
-  const [propertyData, setPropertyData] = useState([]);
 
   //สุ่มข้อมูลนายหน้าแค่ครั้งเดียว
   const randomAgentRef = useRef<any | null>(null); //สร้าง state สำหรับเก้บนายหน้าที่สุ่ม
@@ -113,7 +111,6 @@ const PropertyDetail = () => {
     // ดึงข้อมูลจากไฟล์ JSON หรือ API
     fetch("/propertiesData.json") // หรือใช้ API แทน
       .then((response) => response.json())
-      .then((data) => setPropertyData(data))
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
@@ -129,10 +126,8 @@ const PropertyDetail = () => {
         const response = await axios.get(
           `http://localhost:3002/properties/${propertyId}`
         );
-        console.log("API Response:", response.data);
 
         const agentsRespone = await axios.get("http://localhost:3002/agents");
-        setAgents(agentsRespone.data);
 
         if (response.data) {
           setHouse(response.data);
@@ -172,21 +167,17 @@ const PropertyDetail = () => {
     );
 
   const latlngRaw = house?.["lat,lng"];
-  console.log("Raw latlng:", latlngRaw);
 
   const latlng = latlngRaw?.split(",").map(Number);
-  console.log("Parsed latlng:", latlng);
 
   //ตรวจสอบว่าพิกัดถูกต้องก่อนส่งไปยัง Map
   if (!latlng || latlng.length !== 2 || isNaN(latlng[0]) || isNaN(latlng[1])) {
     console.error("Invalid latlng:", latlng);
   } else {
-    console.log("Valid latlng:", latlng);
   }
 
   const handleFavoriteClick = (
     e: React.MouseEvent<HTMLElement>,
-    id: string
   ) => {
     e.preventDefault(); // ป้องกันไม่ให้ event bubble ไปที่ Popover
     const isFavorited = favorites[house.รหัสทรัพย์]; // ตรวจสอบสถานะปัจจุบัน
@@ -217,7 +208,7 @@ const PropertyDetail = () => {
             <div key={cleanUrl} className="flex">
               <img
                 src={cleanUrl}
-                alt={`property-${house.id}`}
+                alt={`property-${house.รหัสทรัพย์}`}
                 className="rounded-lg shadow-lg w-full h-auto"
               />
             </div>
@@ -245,7 +236,7 @@ const PropertyDetail = () => {
               }
             >
               <div
-                onClick={(e) => handleFavoriteClick(e, house.รหัสทรัพย์)}
+                onClick={handleFavoriteClick}
                 className="text-5xl text-gray-500 absolute flex justify-end "
               >
                 {favorites[house.รหัสทรัพย์] ? (

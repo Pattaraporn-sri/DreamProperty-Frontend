@@ -4,12 +4,9 @@ import { Table } from "antd";
 
 const Compare: React.FC = () => {
   const location = useLocation();
-  console.log(location.state); // ✅ ตรวจสอบข้อมูลที่ถูกส่งมา
   const { properties }: { properties: Property[] } = location.state || {
     properties: [],
   }; //รับข้อมูลที่ส่งมาจากหน้า FavoritePage
-
-  console.log("Properties received for comparison:", properties); // Debug log
 
   //ตรวจสอบว่ามีข้อมูลหรือไม่
   if (!properties || properties.length === 0) {

@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import "maplibre-gl/dist/maplibre-gl.css"; // สไตล์ของ MapLibre
 import maplibregl from "maplibre-gl";
 
-const MapSingleMarker = ({ latlng }: { latlng: [number, number] }) => {
+const MapSingleMarker = ({ latlng }: { latlng: number[] }) => {
   const mapContainer = useRef<HTMLDivElement | null>(null); //Ref สำหรับเก็บ container ของแผนที่
 
   useEffect(() => {
@@ -20,7 +20,6 @@ const MapSingleMarker = ({ latlng }: { latlng: [number, number] }) => {
     }
 
     const [lat, lng] = latlng; //ดึงค่าพิกัดจาก prop
-    console.log("Map Center:", { lng, lat }); // ✅ Debug ค่า
 
     // ✅ ตรวจสอบค่าพิกัดก่อนสร้างแผนที่
     if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {

@@ -14,7 +14,6 @@ const FavoritePage: React.FC = () => {
   const { favorites, toggleFavorite } = useFavorites();
   const navigate = useNavigate();
   const [favoriteProperties, setFavoriteProperties] = useState<Property[]>([]);
-  const [selectedProperties, setSelectedProperties] = useState<Property[]>([]);
 
   useEffect(() => {
     fetch("http://localhost:3002/properties")
@@ -43,19 +42,11 @@ const FavoritePage: React.FC = () => {
     }
   };
 
-  const toggleSelection = (property: Property) => {
-    setSelectedProperties((prevSelected) => {
-      if (prevSelected.some((p) => p.รหัสทรัพย์ === property.รหัสทรัพย์)) {
-        return prevSelected.filter((p) => p.รหัสทรัพย์ !== property.รหัสทรัพย์);
-      } else {
-        return [...prevSelected, property];
-      }
-    });
-  };
-
   const handleCompare = () => {
     if (favoriteProperties.length > 1) {
-      navigate("/favorite/compare", { state: { properties: favoriteProperties } });
+      navigate("/favorite/compare", {
+        state: { properties: favoriteProperties },
+      });
     } else {
       alert("กรุณาเลือกอสังหาริมทรัพย์อย่างน้อย 2 รายการสำหรับการเปรียบเทียบ");
     }

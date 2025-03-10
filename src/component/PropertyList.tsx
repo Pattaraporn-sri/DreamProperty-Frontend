@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import MapSingleMarker from "./MapSingleMarker";
-import { property } from "./Data";
 
 interface Property {
   latLng: string;
@@ -18,7 +17,6 @@ const PropertyList: React.FC = () => {
         if (!response.ok) throw new Error("Failed to fetch properties");
 
         const data = await response.json();
-        console.log("Data from API:", data);
         setPropertyData(data);
       } catch (error) {
         setError("ไ่สามารถโหลดข้อมูลได้");

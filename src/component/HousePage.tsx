@@ -24,7 +24,6 @@ const PropertyList: React.FC = () => {
     fetch("http://localhost:3002/properties")
       .then((response) => response.json())
       .then((data) => {
-        console.log("API response data:", data); // ตรวจสอบข้อมูลจาก API
 
         // ตรวจสอบว่า data ไม่เป็น null หรือ undefined และมีข้อมูลที่เป็น array
         if (data && Array.isArray(data)) {
@@ -32,7 +31,6 @@ const PropertyList: React.FC = () => {
             (house: { ประเภท: string }) => house.ประเภท === "บ้าน"
           );
           // ตรวจสอบข้อมูลหลังจากกรองแล้ว
-          console.log("Filtered houses:", filteredHouses);
 
           // อัพเดต state ให้มีข้อมูลบ้าน
           setHouses(filteredHouses);

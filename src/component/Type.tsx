@@ -16,4 +16,6 @@ export interface Property {
   ขนาดพื้นที่: string;
   ห้องนอน: string;
   ห้องน้ำ: string;
+  "lat,lng": string;
+
 }
