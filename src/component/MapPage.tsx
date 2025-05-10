@@ -10,7 +10,7 @@ const MapPage = () => {
 
   return (
     <div>
-      <Breadcrumb className="mt-3 ml-5 font-Prompt">
+      {/* <Breadcrumb className="mt-3 ml-5 font-Prompt">
         <Breadcrumb.Item
           onClick={() => navigate("/")}
           className="cursor-pointer flex"
@@ -23,7 +23,7 @@ const MapPage = () => {
           <img src={map} className="h-7 ml-1 -mt-1" />
           <p className="ml-2 text-[#9D9D9D]">แผนที่</p>
         </Breadcrumb.Item>
-      </Breadcrumb>
+      </Breadcrumb> */}
 
       <div>
         <Map />

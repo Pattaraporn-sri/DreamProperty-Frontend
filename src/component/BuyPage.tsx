@@ -55,7 +55,6 @@ const PropertyList: React.FC = () => {
   ) => {
     e.preventDefault(); // ป้องกันไม่ให้ event bubble ไปที่ Popover
 
-    // const isFavorited = !!favorites[id]; // ตรวจสอบสถานะปัจจุบัน
     toggleFavorite(id);
 
     if (!favorites[id]) {
@@ -76,16 +75,16 @@ const PropertyList: React.FC = () => {
           onClick={() => navigate("/")}
           className="cursor-pointer flex"
         >
-          <HomeOutlined style={{ fontSize: "20px", marginLeft: "20px" }} />
+          <HomeOutlined style={{ fontSize: "15px", marginLeft: "20px" }} />
           <p className="ml-2">หน้าแรก</p>
         </Breadcrumb.Item>
         <Breadcrumb.Item className="flex">
-          <img src={basket} className="h-6" />
+          <img src={basket} className="h-5" />
           <p className="ml-2 text-[#9D9D9D]">รายการซื้อ</p>
         </Breadcrumb.Item>
       </Breadcrumb>
 
-      <h1 className="text-3xl text-center font-Prompt mt-3 mb-8 text-yellow-900">
+      <h1 className="text-2xl text-center font-Prompt mt-3 mb-8 text-yellow-900">
         รายการซื้ออสังหาริมทรัพย์
       </h1>
 
@@ -94,12 +93,12 @@ const PropertyList: React.FC = () => {
           const propertyId = String(buy.รหัสทรัพย์);
 
           return (
-            <div key={propertyId} className="flex ml-48">
+            <div key={propertyId} className="flex ml-32">
               {/* Pop-up หัวใจรายการโปรด */}
-              <div className="absolute ml-[1800px]">
+              <div className="absolute ml-[1250px]">
                 <Popover
                   title={
-                    <div className="font-Prompt ml-2 mt-2 text-lg text-zinc-600">
+                    <div className="font-Prompt text-center -mb-2 text-sm text-zinc-600">
                       เพิ่มรายการโปรดแล้ว!
                     </div>
                   }
@@ -110,7 +109,7 @@ const PropertyList: React.FC = () => {
                   }
                 >
                   <div
-                    className="text-4xl text-gray-500 flex justify-end mt-7 cursor-pointer"
+                    className="text-2xl text-gray-500 flex justify-end mt-7 cursor-pointer"
                     onClick={(e) => handleFavoriteClick(e, propertyId)}
                   >
                     {favorites[propertyId] ? (
@@ -122,9 +121,9 @@ const PropertyList: React.FC = () => {
                 </Popover>
               </div>
 
-              <div className="flex mb-5 bg-gray-100 w-[1900px] p-5 rounded-2xl shadow-lg">
+              <div className="flex mb-5 bg-gray-100 w-[1300px] p-5 rounded-2xl shadow-lg">
                 <Link to={`/properties/${propertyId}`} key={propertyId}>
-                  <div>
+                  <div className="">
                     {/* แสดงรูปภาพจาก URL */}
                     {buy.image &&
                       buy.image.split(/\*\*+|\*\*\*+/).map((imgUrl, idx) => {
@@ -137,8 +136,8 @@ const PropertyList: React.FC = () => {
                               src={firstImage}
                               alt={`property-${propertyId}-${idx}`}
                               style={{
-                                width: "500px",
-                                height: "270px",
+                                width: "350px",
+                                height: "200px",
                                 margin: "10px",
                                 borderRadius: "5px",
                               }}
@@ -151,36 +150,36 @@ const PropertyList: React.FC = () => {
                   </div>
                 </Link>
 
-                <div className="ml-8 w-[1000px] flex flex-col items-start">
-                  <h2 className="mt-10 text-4xl text-start text-gray-700 w-[1100px]">
+                <div className="ml-8 w-[500px] flex flex-col items-start">
+                  <h2 className="mt-10 text-xl text-start text-gray-700 w-[800px]">
                     {buy["ชื่ออสังหาริมทรัพย์"]}
                   </h2>
-                  <p className="mt-5 text-gray-700 text-2xl">
+                  <p className="mt-5 text-gray-700 text-lg">
                     ราคา {buy["ราคา"]} บาท
                   </p>
 
-                  <div className="flex gap-5 text-gray-700 mt-5 text-lg">
+                  <div className="flex gap-5 text-gray-700 mt-5 text-sm">
                     <div className="flex">
-                      <img src={ruler} className="h-9" />
-                      <p className="mt-2 ml-2">{buy["ขนาดพื้นที่"]}</p>
+                      <img src={ruler} className="h-6" />
+                      <p className="mt-1 ml-2">{buy["ขนาดพื้นที่"]}</p>
                     </div>
 
                     {/*แสดงทุกประเภท ยกเว้นประเภทที่ดิน*/}
                     {buy["ประเภท"] !== "ที่ดิน" && (
                       <div className="flex">
                         <div className="flex">
-                          <img src={bedroom} className="h-9" />
-                          <p className="mt-2 ml-3">{buy["ห้องนอน"]}</p>
+                          <img src={bedroom} className="h-6" />
+                          <p className="mt-1 ml-3">{buy["ห้องนอน"]}</p>
                         </div>
                         <div className="flex ml-4">
-                          <img src={bathtub} className="h-9" />
-                          <p className="mt-2 ml-3">{buy["ห้องน้ำ"]}</p>
+                          <img src={bathtub} className="h-6" />
+                          <p className="mt-1 ml-3">{buy["ห้องน้ำ"]}</p>
                         </div>
                       </div>
                     )}
                   </div>
 
-                  <p className="text-start mt-4 mb-5 text-gray-700 text-xl w-[1200px]">
+                  <p className="text-start mt-4 mb-5 text-gray-700 text-sm w-[800px]">
                     {buy["เกี่ยวกับ"]}
                   </p>
                 </div>

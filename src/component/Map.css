@@ -31,3 +31,14 @@
 .mapboxgl-ctrl-compass {
   background-color: #4CAF50; /* เปลี่ยนสีของปุ่มการหมุน */
 }
+
+/* ปรับขนาดปุ่ม Fullscreen */
+.maplibregl-ctrl-icon {
+  font-size: 30px; /* ปรับขนาดไอคอน */
+  width: 40px; /* ปรับขนาดปุ่ม */
+  height: 40px; /* ปรับขนาดปุ่ม */
+  padding: 10px; /* ปรับระยะห่างภายใน */
+}
+
+
+

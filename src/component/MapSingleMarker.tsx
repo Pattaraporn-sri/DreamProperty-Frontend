@@ -36,6 +36,7 @@ const MapSingleMarker = ({ latlng }: { latlng: number[] }) => {
       zoom: 14, // ระดับการซูม
     });
 
+    map.addControl(new maplibregl.FullscreenControl()); //เพิ่มปุ่ม Fullscreen
     //Add zoom and rotation controls to the map
     map.addControl(new maplibregl.NavigationControl(), "top-right");
 
@@ -49,7 +50,12 @@ const MapSingleMarker = ({ latlng }: { latlng: number[] }) => {
     };
   }, [latlng]);
 
-  return <div ref={mapContainer} style={{ width: "100%", height: "100%", borderRadius: "5px" }} />; // กำหนดขนาดของแผนที่
+  return (
+    <div
+      ref={mapContainer}
+      style={{ width: "100%", height: "100%", borderRadius: "5px" }}
+    />
+  ); // กำหนดขนาดของแผนที่
 };
 
 export default MapSingleMarker;

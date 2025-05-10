@@ -29,6 +29,8 @@ import MapSingleMarker from "./MapSingleMarker";
 import phone from "../img/icons8-phone-24.png";
 import email from "../img/icons8-email-24.png";
 import line from "../img/icons8-line-50.png";
+import { Carousel } from "antd";
+import "./carousel.css";
 
 const iconMap: Record<string, JSX.Element> = {
   กล้องวงจรปิด: <Video size={22} />,
@@ -79,17 +81,17 @@ const PropertyDetails = ({
   };
 
   return (
-    <div className="ml-3 mt-10">
+    <div className="ml-3">
       <div>
-        <h1 className="font-bold text-3xl text-gray-700">ความสะดวกโดยรอบ</h1>
-        <div className="mt-3 text-gray-800 text-xl">
+        <h1 className="font-bold text-xl text-gray-700">ความสะดวกโดยรอบ</h1>
+        <div className="mt-1 text-gray-800 text-sm">
           {formatText(convenience)}
         </div>
       </div>
 
       <div>
-        <h1 className="font-bold text-3xl mt-5 text-gray-700">รายละเอียด</h1>
-        <div className="mt-3 text-gray-800 text-xl">{formatText(detail)}</div>
+        <h1 className="font-bold text-xl mt-5 text-gray-700">รายละเอียด</h1>
+        <div className="mt-1 text-gray-800 text-sm">{formatText(detail)}</div>
       </div>
     </div>
   );
@@ -176,9 +178,7 @@ const PropertyDetail = () => {
   } else {
   }
 
-  const handleFavoriteClick = (
-    e: React.MouseEvent<HTMLElement>,
-  ) => {
+  const handleFavoriteClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault(); // ป้องกันไม่ให้ event bubble ไปที่ Popover
     const isFavorited = favorites[house.รหัสทรัพย์]; // ตรวจสอบสถานะปัจจุบัน
     toggleFavorite(house.รหัสทรัพย์);
@@ -200,7 +200,7 @@ const PropertyDetail = () => {
 
   return (
     <div className="font-Prompt mt-10 ml-10">
-      <div className="flex justify-center gap-4 mr-5">
+      <Carousel autoplay slidesToShow={2} className="ml-56 w-[1100px]">
         {house.image.split(/\*\*+|\s+/).map((imgUrl) => {
           const cleanUrl = imgUrl.trim();
 
@@ -209,23 +209,23 @@ const PropertyDetail = () => {
               <img
                 src={cleanUrl}
                 alt={`property-${house.รหัสทรัพย์}`}
-                className="rounded-lg shadow-lg w-full h-auto"
+                className="rounded-lg w-[500px] h-[250px]"
               />
             </div>
           ) : null;
         })}
-      </div>
+      </Carousel>
 
       <div className="font-Prompt">
         <div className="flex flex-col">
-          <h1 className="text-4xl font-bold ml-3 mt-14 w-[1270px] text-gray-700">
+          <h1 className="text-2xl font-bold ml-3 mt-14 w-[900px] text-gray-700">
             {house["ชื่ออสังหาริมทรัพย์"]}
           </h1>
 
-          <div className="absolute text-gray-500 ml-[1550px] mt-14">
+          <div className="absolute text-gray-500 ml-[950px] mt-14">
             <Popover
               title={
-                <div className="font-Prompt ml-5 text-zinc-600">
+                <div className="font-Prompt text-sm ml-5 -mb-2 text-zinc-600">
                   เพิ่มรายการโปรดแล้ว!
                 </div>
               }
@@ -237,7 +237,7 @@ const PropertyDetail = () => {
             >
               <div
                 onClick={handleFavoriteClick}
-                className="text-5xl text-gray-500 absolute flex justify-end "
+                className="text-2xl text-gray-500 absolute flex justify-end "
               >
                 {favorites[house.รหัสทรัพย์] ? (
                   <HeartFilled style={{ color: "red" }} /> // ถ้าคลิกแล้วให้แสดง HeartFilled เป็นสีแดง
@@ -249,7 +249,7 @@ const PropertyDetail = () => {
           </div>
 
           {/*ข้อมูลนายหน้า*/}
-          <div className="absolute ml-[1650px] mt-10 bg-slate-100 w-[550px] p-5 rounded-xl shadow-lg">
+          <div className="absolute ml-[1000px] mt-10 bg-slate-100 w-[420px] p-5 rounded-xl shadow-lg">
             {randomAgentRef.current ? (
               <div
                 className="font-Prompt text-gray-600"
@@ -258,25 +258,25 @@ const PropertyDetail = () => {
                 <div className="flex">
                   <img
                     src={randomAgentRef.current.image}
-                    className="rounded-xl w-48 h-36"
+                    className="rounded-xl w-36 h-24"
                   />
                   <div>
-                    <p className="mt-3 ml-5 text-2xl">
+                    <p className="ml-5 text-lg">
                       {randomAgentRef.current.name}
                       <CheckCircleOutlined className="text-base text-gray-500 ml-3" />
                     </p>
 
-                    <div className="mt-4 ml-5 flex">
-                      <img src={phone} />
-                      <p className="ml-4">{randomAgentRef.current.phone}</p>
+                    <div className="ml-5 flex mt-2">
+                      <img src={phone} className="h-4"/>
+                      <p className="ml-3 text-xs">{randomAgentRef.current.phone}</p>
                     </div>
                     <div className="ml-5 mt-1 flex">
-                      <img src={email} />
-                      <p className="ml-4">{randomAgentRef.current.email}</p>
+                      <img src={email} className="h-4"/>
+                      <p className="ml-3 text-xs">{randomAgentRef.current.email}</p>
                     </div>
                     <div className="ml-5 mt-1 flex">
-                      <img src={line} className="h-7" />
-                      <p className="ml-4">{randomAgentRef.current.line}</p>
+                      <img src={line} className="h-5" />
+                      <p className="ml-2 text-xs">{randomAgentRef.current.line}</p>
                     </div>
                   </div>
                 </div>
@@ -287,13 +287,13 @@ const PropertyDetail = () => {
           </div>
 
           {/* แสดงแผนที่โดยส่งพิกัดจาก lat,lng */}
-          <div className="ml-[1205px] w-[1000px] mt-36 mb-10">
-            <h2 className="mt-8 mb-2 text-2xl text-gray-700 font-bold">
+          <div className="ml-[900px] w-[550px] mt-36 mb-10">
+            <h2 className="-mt-10 mb-2 text-xl text-gray-700 font-bold">
               ตำแหน่งบนแผนที่
             </h2>
             <div>
               {latlng && latlng.length === 2 && (
-                <div style={{ width: "100%", height: "500px" }}>
+                <div style={{ width: "100%", height: "350px" }}>
                   <MapSingleMarker latlng={latlng} />
                 </div>
               )}
@@ -301,26 +301,26 @@ const PropertyDetail = () => {
           </div>
         </div>
 
-        <p className="ralative ml-3 -mt-[750px] text-3xl text-gray-600">
+        <p className="ralative ml-3 -mt-[510px] text-lg text-gray-600">
           ราคา {house["ราคา"]} บาท
         </p>
 
-        <div className="flex mt-5 mb-8 text-xl text-gray-500">
-          <p className="ml-5 flex">
-            <img src={ruler} className="h-9" />
-            <p className="mt-2 ml-2">ขนาดพื้นที่ {house["ขนาดพื้นที่"]}</p>
+        <div className="flex mt-5 mb-8 text-sm text-gray-500">
+          <p className="ml-3 flex">
+            <img src={ruler} className="h-6" />
+            <p className="mt-1 ml-2">ขนาดพื้นที่ {house["ขนาดพื้นที่"]}</p>
           </p>
 
           {/*แสดงเฉพาะประเภท บ้าน คอนโด ทาวน์เฮ้าส์*/}
           {house["ประเภท"] !== "ที่ดิน" && (
             <div className="flex">
               <p key={house["รหัสทรัพย์"]} className="ml-5 flex">
-                <img src={bedroom} className="h-9" />
-                <p className="ml-5 mt-2">{house["ห้องนอน"] ?? "-"}</p>
+                <img src={bedroom} className="h-6" />
+                <p className="ml-2 mt-1">{house["ห้องนอน"] ?? "-"}</p>
               </p>
               <p key={house["รหัสทรัพย์"]} className="ml-5 flex">
-                <img src={bathtub} className="h-9" />
-                <p className="ml-5 mt-2">{house["ห้องน้ำ"] ?? "-"}</p>
+                <img src={bathtub} className="h-6" />
+                <p className="ml-2 mt-1">{house["ห้องน้ำ"] ?? "-"}</p>
               </p>
             </div>
           )}
@@ -333,8 +333,8 @@ const PropertyDetail = () => {
         detail={house["รายละเอียดอสังหาฯ"] || "-"}
       />
 
-      <div className="ml-3 mt-7 mb-5 text-gray-700 text-lg w-[1000px] bg-gray-100 rounded-lg p-5 shadow-lg">
-        <p className="text-xl">{house["เกี่ยวกับ"]}</p>
+      <div className="ml-3 mt-5 mb-5 text-gray-700 text-lg w-[800px] bg-gray-100 rounded-lg p-5 shadow-lg">
+        <p className="text-sm">{house["เกี่ยวกับ"]}</p>
       </div>
     </div>
   );

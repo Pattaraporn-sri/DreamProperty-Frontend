@@ -1,0 +1,19 @@
+/* จัดตำแหน่งขีด (Indicator Dots) */
+.custom-carousel .slick-dots {
+    position: absolute;
+    bottom: -25px; /* เลื่อนลงใต้รูป */
+    width: 100%;
+  }
+  
+  /* สีปกติของขีด */
+  .custom-carousel .slick-dots li button {
+    background-color: #262525 !important;
+  }
+  
+  /* สีของขีดที่ active */
+  .custom-carousel .slick-dots li.slick-active button {
+    background-color: #c5a87e !important;
+  }
+  
+
+

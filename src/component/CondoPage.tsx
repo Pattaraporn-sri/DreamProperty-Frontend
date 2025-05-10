@@ -20,7 +20,6 @@ const PropertyList: React.FC = () => {
     fetch("http://localhost:3002/properties")
       .then((response) => response.json())
       .then((data) => {
-
         //ตรวจสอบว่า data ไม่เป็น null หรือ undefined และมีข้อมูลที่เป็น array
         if (data && Array.isArray(data)) {
           const filteredCondos = data.filter(
@@ -78,31 +77,44 @@ const PropertyList: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb className="mt-3 ml-5 font-Prompt">
-        <Breadcrumb.Item
-          onClick={() => navigate("/")}
-          className="cursor-pointer flex"
-        >
-          <HomeOutlined style={{ fontSize: "20px", marginLeft: "20px" }} />
-          <p className="ml-2">หน้าแรก</p>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item className="flex">
-          <img src={condo} className="h-6 ml-1" />
-          <p className="ml-2 text-[#9D9D9D]">รายการคอนโด</p>
-        </Breadcrumb.Item>
-      </Breadcrumb>
+      <Breadcrumb
+        className="mt-3 ml-5 font-Prompt"
+        items={[
+          {
+            title: (
+              <div
+                className="cursor-pointer flex"
+                onClick={() => navigate("/")}
+              >
+                <HomeOutlined
+                  style={{ fontSize: "15px", marginLeft: "20px" }}
+                />
+                <p className="ml-2">หน้าแรก</p>
+              </div>
+            ),
+          },
+          {
+            title: (
+              <div className="flex">
+                <img src={condo} className="h-5 ml-1" alt="คอนโด" />
+                <p className="ml-2 text-[#9D9D9D]">รายการคอนโด</p>
+              </div>
+            ),
+          },
+        ]}
+      />
 
-      <h1 className="text-3xl text-center font-Prompt mt-3 mb-8 text-yellow-900">
+      <h1 className="text-2xl text-center font-Prompt mt-3 mb-8 text-yellow-900">
         รายการคอนโด
       </h1>
 
       {condos.length > 0 &&
         condos.map((condo) => (
-          <div className="ml-44">
-            <div className="absolute ml-[1750px] mt-3">
+          <div className="ml-32">
+            <div className="absolute ml-[1250px] mt-3">
               <Popover
                 title={
-                  <div className="font-Prompt ml-2 mt-2 teext-lg text-zinc-600">
+                  <div className="font-Prompt text-center -mb-2 text-sm text-zinc-600">
                     เพิ่มรายการโปรดแล้ว!
                   </div>
                 }
@@ -114,7 +126,7 @@ const PropertyList: React.FC = () => {
               >
                 <div
                   key={condo.รหัสทรัพย์}
-                  className="text-4xl text-gray-500 flex justify-end mt-7"
+                  className="text-2xl text-gray-500 flex justify-end mt-7"
                   onClick={(e) => handleFavoriteClick(e, condo.รหัสทรัพย์)}
                 >
                   {favorites[condo.รหัสทรัพย์] ? (
@@ -126,7 +138,7 @@ const PropertyList: React.FC = () => {
               </Popover>
             </div>
 
-            <div className="flex mb-5 bg-gray-100 w-[1850px] p-5 rounded-2xl shadow-lg font-Prompt mt-8">
+            <div className="flex mb-5 bg-gray-100 w-[1300px] p-5 rounded-2xl shadow-lg font-Prompt mt-8">
               <div className="flex">
                 <Link
                   to={`/properties/${condo.รหัสทรัพย์}`}
@@ -146,8 +158,8 @@ const PropertyList: React.FC = () => {
                                 alt={`property-${idx}-${idx}`}
                                 onError={(e) => handleImageError(e, images)}
                                 style={{
-                                  width: "500px",
-                                  height: "270px",
+                                  width: "350px",
+                                  height: "200px",
                                   margin: "10px",
                                   borderRadius: "5px",
                                 }}
@@ -161,29 +173,29 @@ const PropertyList: React.FC = () => {
 
                 <div
                   key={condo.รหัสทรัพย์}
-                  className="ml-5 w-[1000px] flex flex-col items-start text-gray-700"
+                  className="ml-5 w-[500px] flex flex-col items-start text-gray-700"
                 >
-                  <h2 className="mt-10 text-4xl text-start w-[1200px]">
+                  <h2 className="mt-6 text-xl text-start w-[800px]">
                     {condo["ชื่ออสังหาริมทรัพย์"]}
                   </h2>
-                  <p className="mt-5 text-3xl">ราคา {condo["ราคา"]} บาท</p>
+                  <p className="mt-5 text-lg">ราคา {condo["ราคา"]} บาท</p>
 
-                  <div className="flex gap-5 text-gray-700 mt-5 text-lg">
+                  <div className="flex gap-5 text-gray-700 mt-5 text-sm">
                     <div className="flex">
-                      <img src={ruler} className="h-9" />
-                      <p className="mt-2 ml-2">{condo["ขนาดพื้นที่"]}</p>
+                      <img src={ruler} className="h-6" />
+                      <p className="mt-1 ml-2">{condo["ขนาดพื้นที่"]}</p>
                     </div>
                     <div className="flex">
-                      <img src={bedroom} className="h-9" />
-                      <p className="mt-2 ml-3">{condo["ห้องนอน"]}</p>
+                      <img src={bedroom} className="h-6" />
+                      <p className="mt-1 ml-3">{condo["ห้องนอน"]}</p>
                     </div>
                     <div className="flex">
-                      <img src={bathtub} className="h-9" />
-                      <p className="mt-2 ml-3">{condo["ห้องน้ำ"]}</p>
+                      <img src={bathtub} className="h-6" />
+                      <p className="mt-1 ml-3">{condo["ห้องน้ำ"]}</p>
                     </div>
                   </div>
 
-                  <p className="text-start mt-4 mb-5 text-xl w-[1250px]">
+                  <p className="text-start mt-4 mb-5 text-sm w-[800px]">
                     {condo["เกี่ยวกับ"]}
                   </p>
                 </div>

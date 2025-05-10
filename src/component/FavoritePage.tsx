@@ -54,41 +54,54 @@ const FavoritePage: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb className="mt-3 ml-5 font-Prompt">
-        <Breadcrumb.Item
-          onClick={() => navigate("/")}
-          className="cursor-pointer flex"
-        >
-          <HomeOutlined style={{ fontSize: "20px", marginLeft: "20px" }} />
-          <p className="ml-2">หน้าแรก</p>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item className="flex">
-          <img src={heart} className="h-5" alt="heart icon" />
-          <p className="ml-2 text-[#9D9D9D]">รายการโปรด</p>
-        </Breadcrumb.Item>
-      </Breadcrumb>
+      <Breadcrumb
+        className="mt-3 ml-5 font-Prompt"
+        items={[
+          {
+            title: (
+              <div
+                className="cursor-pointer flex"
+                onClick={() => navigate("/")}
+              >
+                <HomeOutlined
+                  style={{ fontSize: "15px", marginLeft: "20px" }}
+                />
+                <p className="ml-2">หน้าแรก</p>
+              </div>
+            ),
+          },
+          {
+            title: (
+              <div className="flex">
+                <img src={heart} className="h-5" alt="heart icon" />
+                <p className="ml-2 text-[#9D9D9D]">รายการโปรด</p>
+              </div>
+            ),
+          },
+        ]}
+      />
 
       <button
-        className="fixed bottom-10 right-10 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md"
+        className="font-Prompt fixed bottom-10 right-10 text-sm bg-yellow-800 text-white px-2 py-3 rounded-lg shadow-md z-10"
         onClick={handleCompare}
       >
-        เปรียบเทียบ
+        เปรียบเทียบรายการอสังหาริมทรัพย์
       </button>
 
-      <h1 className="text-3xl font-Prompt text-gray-600 flex justify-center mt-10">
+      <h1 className="text-2xl font-Prompt text-yellow-900 flex justify-center mt-5">
         รายการโปรดของคุณ
       </h1>
 
-      <div className="flex flex-wrap ml-14 mb-10">
+      <div className="flex flex-wrap ml-20 mb-10">
         {favoriteProperties.length > 0 ? (
           favoriteProperties.map((property) => (
             <div key={property.รหัสทรัพย์} className="m-2">
-              <div className="bg-gray-100 w-[400px] p-5 rounded-xl ml-5 shadow-lg relative mt-8">
+              <div className="bg-gray-100 w-[300px] max-h-[550px] p-5 rounded-xl ml-5 shadow-lg relative mt-8">
                 <Link
                   to={`/properties/${property.รหัสทรัพย์}`}
                   key={property.รหัสทรัพย์}
                 >
-                  <div className="mr-5 mt-9">
+                  <div className="mt-5">
                     {property.image &&
                       property.image
                         .split(/\*\*+|\*\*\*+/)
@@ -103,8 +116,8 @@ const FavoritePage: React.FC = () => {
                                 onError={(e) => handleImageError(e, images)}
                                 style={{
                                   width: "350px",
-                                  height: "200px",
-                                  margin: "8px",
+                                  height: "150px",
+                                  // margin: "5px",
                                   borderRadius: "5px",
                                 }}
                               />
@@ -114,39 +127,38 @@ const FavoritePage: React.FC = () => {
                         })[0]}
                   </div>
                 </Link>
-
                 <HeartFilled
                   style={{
                     color: "red",
                     cursor: "pointer",
                     position: "absolute",
-                    top: "15px",
+                    top: "10px",
                     right: "15px",
-                    fontSize: "30px",
+                    fontSize: "20px",
                   }}
                   onClick={() => toggleFavorite(property.รหัสทรัพย์)}
                 />
                 <div className="font-Prompt text-gray-700">
-                  <h2 className="text-2xl ml-2 mt-5">
+                  <h2 className="text-xl ml-2 mt-5 truncate">
                     {property["ชื่ออสังหาริมทรัพย์"]}
                   </h2>
-                  <p className="text-xl mt-3 ml-1">ราคา {property["ราคา"]}</p>
+                  <p className="text-sm mt-2 ml-1">ราคา {property["ราคา"]}</p>
 
-                  <div className="flex gap-1 text-gray-700 mt-4 text-base ml-2">
+                  <div className="flex text-gray-700 mt-4 text-xs ml-2">
                     <div className="flex">
                       <img src={ruler} className="h-5" />
-                      <p className="ml-2">{property["ขนาดพื้นที่"]}</p>
+                      <p className="ml-1 mt-1">{property["ขนาดพื้นที่"]}</p>
                     </div>
 
                     {property["ประเภท"] !== "ที่ดิน" && (
                       <div className="flex">
                         <div className="flex">
                           <img src={bedroom} className="h-5 ml-2" />
-                          <p className="ml-2">{property["ห้องนอน"]}</p>
+                          <p className="ml-2 mt-1">{property["ห้องนอน"]}</p>
                         </div>
                         <div className="flex">
                           <img src={bathtub} className="h-5 ml-2" />
-                          <p className="ml-2">{property["ห้องน้ำ"]}</p>
+                          <p className="ml-2 mt-1">{property["ห้องน้ำ"]}</p>
                         </div>
                       </div>
                     )}

@@ -18,7 +18,7 @@ const MainLayout = () => {
   const searchRef = useRef<HTMLDivElement>(null);
   const location = useLocation(); // ใช้ในคอมโพเนนต์เท่านั้น
 
-  //ฟังก์ชันดึงข้อมู,จาก API
+  //ฟังก์ชันดึงข้อมูลจาก API
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -94,14 +94,14 @@ const MainLayout = () => {
       <div>
         <div className="flex mt-3">
           <Link to="/" className="hover:text-red-700 ml-10">
-            <img src={logo} className="rounded-full w-48 h-24 -ml-1" />
-            <div className="absolute text-xl -mt-[55px] ml-10 font-Calistoga text-neutral-600">
+            <img src={logo} className="rounded-full w-40 h-16" />
+            <div className="absolute -mt-[40px] ml-9 font-Calistoga text-neutral-600">
               DreamProperty
             </div>
           </Link>
 
-          <div className="flex justify-center w-full ml-10">
-            <div className="space-x-5 mt-9 pt-1 text-xl border-2 rounded-r-full rounded-l-full w-[500px] h-14 flex justify-center ml-56 font-Prompt text-neutral-900">
+          <div className="flex justify-center w-full">
+            <div className="space-x-5 mt-5 text-sm border-2 rounded-r-full rounded-l-full w-[360px] h-9  flex justify-center ml-36 font-Prompt text-neutral-900">
               {[
                 { name: "แผนที่", path: "/map" },
                 { name: "ซื้อ", path: "/buy" },
@@ -127,9 +127,9 @@ const MainLayout = () => {
             </div>
           </div>
 
-          <div className="text-gray-400 w-56 h-10 flex justify-end items-center mt-10 m-3 hover:text-red-500">
+          <div className="text-gray-400 flex justify-center items-center mr-3 hover:text-red-500">
             <Link to="/favorite">
-              <HeartOutlined className="text-4xl" />
+              <HeartOutlined className="text-2xl mt-2" />
             </Link>
           </div>
 
@@ -142,13 +142,13 @@ const MainLayout = () => {
               onChange={(e) =>
                 setSearchTerm(e.target.value.trim().toLowerCase())
               }
-              className="border-2 w-72 h-12 mr-6 mt-10 rounded-r-full rounded-l-full px-3 font-Prompt"
+              className="border-2 w-64 h-9 mr-6 mt-5 rounded-r-full rounded-l-full px-3 font-Prompt text-sm"
               onFocus={() => setShowDropdown(true)}
             />
-            <img src={search} className="absolute h-7 right-0 mr-9 -mt-10" />
+            <img src={search} className="absolute h-5 right-0 mr-9 -mt-7" />
 
             {showDropdown && (
-              <ul className="absolute z-10 bg-white border w-[270px] mt-3 rounded-xl shadow-lg max-h-96 overflow-y-auto right-0 mr-6">
+              <ul className="absolute z-10 bg-white border w-[270px] mt-3 rounded-xl shadow-lg max-h-[500px] overflow-y-auto right-0 mr-6">
                 {filteredProperties.map((property) => {
                   const images = property.image
                     .split(/\*\*+|\*\*\*+/)
@@ -171,7 +171,7 @@ const MainLayout = () => {
                           className="w-56 h-32 rounded-md ml-2"
                         />
                       )}
-                      <div className="font-Prompt mt-5 ">
+                      <div className="font-Prompt mt-5">
                         <p className="text-gray-800">
                           {property.ชื่ออสังหาริมทรัพย์ || "-"}
                         </p>

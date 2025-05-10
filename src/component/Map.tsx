@@ -2,14 +2,23 @@ import React, { useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl"; // ใช้ MapLibre
 import { Property } from "./Type";
 import axios from "axios";
-import { Drawer, Popover } from "antd";
+import { Breadcrumb, Drawer, Popover } from "antd";
 import { Select } from "antd";
 import ruler from "../img/icons8-ruler-48.png";
 import bedroom from "../img/icons8-bedroom-48.png";
 import bathtub from "../img/icons8-bathtub-32.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFavorites } from "./FavoriteContext";
-import { HeartFilled, HeartOutlined } from "@ant-design/icons";
+import { HeartFilled, HeartOutlined, HomeOutlined } from "@ant-design/icons";
+import "./Map.css";
+import styles from "./Switcher.module.css"; // หรือไฟล์ CSS Module ที่คุณใช้
+import mapimg from "../img/icons8-map-marker-48.png";
+
+const baseMaps: Record<string, string> = {
+  Streets: "https://tiles.stadiamaps.com/styles/alidade_bright.json",
+  Satellite:
+    "https://api.maptiler.com/maps/hybrid/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL",
+};
 
 const Map: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -18,14 +27,17 @@ const Map: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>("ทั้งหมด");
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [markers, setMarkers] = useState<maplibregl.Marker[]>([]);
-  const mapContainerRef = useRef<HTMLDivElement | null>(null); // ใช้ ref เก็บ div
   const [open, setOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(
     null
   ); //ข้อมูลที่เลือก
-  const mapRef = useRef<maplibregl.Map | null>(null);
   const { favorites, toggleFavorite } = useFavorites(); // สถานะเพื่อเช็คว่ากดหรือไม่
   const [openPopoverId, setOpenPopoverId] = useState<string | null>(null); // ใช้ string แทน boolean
+  const [tooltip, setTooltip] = useState<maplibregl.Popup | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null); // ใช้ ref เก็บ div
+  const [activeStyle, setActiveStyle] = useState(Object.keys(baseMaps)[0]); // ใช้สำหรับเปลี่ยนสไตล์แผนที่
+  const [map, setMap] = useState<maplibregl.Map | null>(null); // ใช้สำหรับเปลี่ยนสไตล์แผนที่
+  const navigate = useNavigate();
 
   //ฟังก์ชันดึงข้อมูลจาก API
   useEffect(() => {
@@ -59,7 +71,7 @@ const Map: React.FC = () => {
   useEffect(() => {
     let filtered = properties;
 
-    // //กรองตามประเภท
+    //กรองตามประเภท
     if (selectedType !== "ทั้งหมด") {
       filtered = filtered.filter((p) => p.ประเภท === selectedType);
     }
@@ -69,54 +81,40 @@ const Map: React.FC = () => {
       filtered = filtered.filter((p) => {
         const price = parseFloat(p.ราคา.replace(/[^0-9.]/g, "")); //แปลงราคาเป็นตัวเลข
         if (selectedPriceRange === "ต่ำกว่า 1 ล้าน") return price < 1_000_000;
-        if (selectedPriceRange === "1-3 ล้าน")
+        if (selectedPriceRange === "1 - 3 ล้าน")
           return price >= 1_000_000 && price <= 3_000_000;
-        if (selectedPriceRange === "3-5 ล้าน")
+        if (selectedPriceRange === "3 - 5 ล้าน")
           return price > 3_000_000 && price <= 5_000_000;
-        if (selectedPriceRange === "5-10 ล้าน")
+        if (selectedPriceRange === "5 - 10 ล้าน")
           return price > 5_000_000 && price <= 10_000_000;
         if (selectedPriceRange === "มากกว่า 10 ล้าน") return price > 10_000_000;
         return true;
       });
     }
-
     setFilteredProperties(filtered);
   }, [selectedType, selectedPriceRange, properties]);
 
-  // อัปเดต filteredProperties ตามประเภทที่เลือก
-  useEffect(() => {
-    const filtered =
-      selectedType === "ทั้งหมด"
-        ? properties
-        : properties.filter((p) => p.ประเภท === selectedType);
-
-    setFilteredProperties(filtered);
-  }, [selectedType, properties]);
-
   //โหลดแผนที่เมื่อคอมโพแนนต์ถูกโหลดครั้งแรก
   useEffect(() => {
-    if (!mapContainerRef.current) return; //ป้องกัน error
-
-    if (!mapRef.current) {
+    if (!map && mapContainerRef.current) {
       // สร้างแผนที่เมื่อคอมโพเนนต์ถูกโหลด
       const newMap = new maplibregl.Map({
-        container: mapContainerRef.current,
-        style: "https://tiles.stadiamaps.com/styles/alidade_bright.json", // รูปแบบแผนที่
-        center: [102.8236, 16.4322], // จุดเริ่มต้น (Long, Lat)
-        zoom: 13, // ระดับซูมเริ่มต้น
+        container: mapContainerRef.current, //mapContainerRef ถูกใช้งานที่นี้
+        style: baseMaps[activeStyle], //ใช้เพื่อสลับแผนที่
+        center: [102.8236, 16.4322], // จุดเริ่มต้น (Lng, Lat)
+        zoom: 12, // ระดับซูมเริ่มต้น
         pitch: 60,
         bearing: 82,
+        cooperativeGestures: true, //fullscreen
       });
 
-      //เพิ่มการควบคุมการซูมและการหมุน
-      newMap.addControl(new maplibregl.NavigationControl(), "top-right");
+      newMap.addControl(new maplibregl.FullscreenControl()); //เพิ่มปุ่ม Fullscreen
+      newMap.addControl(new maplibregl.NavigationControl(), "top-right"); //เพิ่มการควบคุมการซูมและการหมุน
 
       // หลังจากแผนที่โหลดแล้ว เราจะเพิ่ม layer สำหรับแสดงอาคาร 3D
       newMap.on("load", () => {
         const layers = newMap.getStyle().layers;
-
-        // ค้นหาชั้น layer ที่แสดง label (เช่น ชื่อสถานที่)
-        let labelLayerId;
+        let labelLayerId; // ค้นหาชั้น layer ที่แสดง label (เช่น ชื่อสถานที่)
         for (let i = 0; i < layers.length; i++) {
           if (
             layers[i].type === "symbol" &&
@@ -128,86 +126,114 @@ const Map: React.FC = () => {
           }
         }
 
-        // เพิ่ม layer 3D สำหรับอาคาร
-        newMap.addLayer(
-          {
-            id: "3d-buildings",
-            source: "openmaptiles",
-            "source-layer": "building",
-            filter: ["!", ["to-boolean", ["get", "hide_3d"]]],
-            type: "fill-extrusion",
-            minzoom: 13,
-            paint: {
-              "fill-extrusion-color": "lightgray",
-              "fill-extrusion-height": [
-                "interpolate",
-                ["linear"],
-                ["zoom"],
-                13,
-                0,
-                16,
-                ["get", "render_height"],
-              ],
-              "fill-extrusion-base": [
-                "case",
-                [">=", ["get", "zoom"], 16],
-                ["get", "render_min_height"],
-                0,
-              ],
+        //------- เพิ่ม layer 3D สำหรับอาคาร ----------
+        if (labelLayerId) {
+          newMap.addLayer(
+            {
+              id: "3d-buildings",
+              source: "openmaptiles",
+              "source-layer": "building",
+              filter: ["!", ["to-boolean", ["get", "hide_3d"]]],
+              type: "fill-extrusion",
+              minzoom: 13,
+              paint: {
+                "fill-extrusion-color": "lightgray",
+                "fill-extrusion-height": [
+                  "interpolate",
+                  ["linear"],
+                  ["zoom"],
+                  13,
+                  0,
+                  16,
+                  ["get", "render_height"],
+                ],
+                "fill-extrusion-base": [
+                  "case",
+                  [">=", ["get", "zoom"], 16],
+                  ["get", "render_min_height"],
+                  0,
+                ],
+              },
             },
-          },
-          labelLayerId // เพิ่มชั้นนี้ตรงใต้ label
-        );
+            labelLayerId // เพิ่มชั้นนี้ตรงใต้ label
+          );
+        }
+
+        //เพิ่มหมุดจาก filteredProperties
+        if (filteredProperties.length > 0) {
+          const newMarkers: maplibregl.Marker[] = [];
+          filteredProperties.forEach((property) => {
+            if (property.location?.coordinates) {
+              const [lng, lat] = property.location.coordinates;
+
+              const marker = new maplibregl.Marker({ color: "red"})
+                .setLngLat([lng, lat])
+                .addTo(newMap);
+
+              const defaultImage =
+                "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"; // รูปเริ่มต้น กรณีไม่มีรูป
+
+              const popup = new maplibregl.Popup({
+                offset: 25,
+                closeButton: false,
+              }).setLngLat([lng, lat]).setHTML(`<div border-radius: 20px;">
+                <img src="${
+                  property.image
+                    ? property.image.split(/\*\*+|\*\*\*+/)[0].trim()
+                    : defaultImage
+                }"
+              alt="property-image" 
+              style="width: 250px; height: 100px; object-fit: cover; border-radius: 3px;" 
+              onerror="this.onerror=null; this.src='${defaultImage}';"
+            />
+            <p style="font-size: 13px; font-family: Prompt; font-weight: bold; color:#4b5563; margin-top: 10px;">${
+              property.ชื่ออสังหาริมทรัพย์
+            }</p>
+            <p style="color: #4b5563; font-size: 12px; font-family: Prompt;">${
+              property.ราคา
+            } ฿</p>
+            <p style="color: #4b5563; font-size: 12px; font-family: Prompt;">${
+              property.ประเภท
+            }</p>
+          </div>`);
+
+              marker.getElement().addEventListener("mouseenter", () => {
+                setTooltip(popup);
+                popup.addTo(newMap);
+              });
+
+              marker.getElement().addEventListener("mouseleave", () => {
+                popup.remove(); // ซ่อน tooltip เมื่อไม่ hover
+              });
+
+              marker.getElement().addEventListener("click", () => {
+                //ซูมเข้าไปที่หมุดก่อน
+                newMap.flyTo({
+                  center: [lng, lat],
+                  zoom: 18,
+                  essential: true, //ทำให้การซูมเป้นส่วนสำคัญของแอนิเมชั่น
+                });
+
+                //เมื่อการซูมเสร็จแล้ว ให้เปิด drawer
+                newMap.once("moveend", () => {
+                  setSelectedProperty(property);
+                  setOpen(true);
+                });
+              });
+
+              newMarkers.push(marker);
+            }
+          });
+          setMarkers((prevMarkers) => [...prevMarkers, ...newMarkers]);
+        }
       });
 
-      mapRef.current = newMap;
+      return () => {
+        newMap.remove();
+        setMap(null);
+      };
     }
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-    };
-  }, [filteredProperties]); //ทำให้แผนที่อัพเดตตามค่า filteredProperties
-
-  //อัปเดตหมุดเมื่อ filterPropertied เปลี่ยนแปลง
-  useEffect(() => {
-    if (!mapRef.current) return; //ถ้าแผนที่ยังไม่โหลด ไม่ต้องทำอะไร
-
-    //ลบหมุดเก่าก่อน
-    markers.forEach((marker) => marker.remove());
-    const newMarkers: maplibregl.Marker[] = [];
-
-    filteredProperties.forEach((property) => {
-      if (!property.location || !property.location.coordinates) return;
-
-      const [lng, lat] = property.location.coordinates;
-
-      const marker = new maplibregl.Marker()
-        .setLngLat([lng, lat])
-        .addTo(mapRef.current!);
-
-      marker.getElement().addEventListener("click", () => {
-        //ซูมเข้าไปที่หมุดก่อน
-        mapRef.current?.flyTo({
-          center: [lng, lat],
-          zoom: 18,
-          essential: true, //ทำให้การซูมเป้นส่วนสำคัญของแอนิเมชั่น
-        });
-
-        //เมื่อการซูมเสร็จแล้ว ให้เปิด drawer
-        mapRef.current?.once("moveend", () => {
-          setSelectedProperty(property);
-          setOpen(true);
-        });
-      });
-
-      newMarkers.push(marker);
-    });
-
-    setMarkers(newMarkers);
-  }, [filteredProperties]);
+  }, [activeStyle, filteredProperties]); //ทำให้แผนที่อัพเดตตามค่า filteredProperties
 
   // ฟังก์ชันจัดการการแสดงผลรูปภาพหลายรูป
   const handleImageError = (
@@ -236,7 +262,7 @@ const Map: React.FC = () => {
     setOpenPopoverId(newOpen ? id : null);
   };
 
-  //ควรคุมการกดหัวใจ
+  //ควบคุมการกดหัวใจ
   const handleFavoriteClick = (
     e: React.MouseEvent<HTMLElement>,
     id: string
@@ -262,38 +288,68 @@ const Map: React.FC = () => {
 
   return (
     <div>
+      <Breadcrumb
+        className="ml-5 font-Prompt"
+        items={[
+          {
+            title: (
+              <div
+                className="cursor-pointer flex"
+                onClick={() => navigate("/")}
+              >
+                <HomeOutlined
+                  style={{ fontSize: "15px", marginLeft: "20px" }}
+                />
+                <p className="ml-2">หน้าแรก</p>
+              </div>
+            ),
+          },
+          {
+            title: (
+              <div className="flex">
+                <img src={mapimg} className="h-5 ml-1" alt="แผนที่" />
+                <p className="ml-2 text-[#9D9D9D]">แผนที่</p>
+              </div>
+            ),
+          },
+        ]}
+      />
+
+      {/* สวิตช์เลอร์แผนที่ */}
+      <div className={styles.switcher + " absolute bottom-8 left-10 z-10"}>
+        {Object.keys(baseMaps).map((name) => (
+          <button
+            key={name}
+            className={`${styles.basemap} ${
+              activeStyle === name ? styles.active : ""
+            }`}
+            onClick={() => setActiveStyle(name)} // เมื่อคลิกที่แผนที่, สลับไปใช้สไตล์นั้น
+            aria-label={`Switch to ${name} map`} // เพิ่ม aria-label เพื่อให้สามารถเข้าถึงได้
+          >
+            <img
+              src={`https://cloud.maptiler.com/static/img/maps/${name.toLowerCase()}.png`}
+              alt={name}
+            />
+          </button>
+        ))}
+      </div>
+
       {/*แผนที่*/}
       <div
         ref={mapContainerRef}
         style={{
           width: "100%",
-          height: "86.8vh",
+          height: "84.5vh",
           position: "relative",
+          marginTop: "15px",
         }}
       >
-        {/* ปุ่มเลือกประเภทอสังหา */}
-        <div className="absolute top-4 left-60 z-10 bg-white p-2 rounded-lg shadow-lg flex gap-2">
-          {["ทั้งหมด", "บ้าน", "คอนโด", "ที่ดิน", "ทาวน์เฮ้าส์"].map((type) => (
-            <button
-              key={type}
-              onClick={() => setSelectedType(type)}
-              className={`px-4 py-2 text-base font-Prompt rounded-lg transition-all duration-300 ${
-                selectedType === type
-                  ? "bg-gray-400 shadow-lg scale-105"
-                  : "bg-gray-200 hover:bg-gray-500 hover:scale-105"
-              }`}
-            >
-              {type}
-            </button>
-          ))}
-        </div>
-
         {/* Dropdown กรองช่วงราคา */}
         <Select
           value={selectedPriceRange}
           onChange={(value) => setSelectedPriceRange(value)}
           style={{ width: 200 }}
-          className="z-10 font-Prompt rounded-lg top-4 left-5 h-10"
+          className="z-10 font-Prompt rounded-lg top-4 left-5 h-7"
         >
           {priceRange.map((range) => (
             <Select.Option
@@ -305,6 +361,22 @@ const Map: React.FC = () => {
             </Select.Option>
           ))}
         </Select>
+        {/* ปุ่มเลือกประเภทอสังหา */}
+        <div className="absolute top-4 left-60 z-10 bg-white p-2 rounded-lg shadow-lg flex gap-2">
+          {["ทั้งหมด", "บ้าน", "คอนโด", "ที่ดิน", "ทาวน์เฮ้าส์"].map((type) => (
+            <button
+              key={type}
+              onClick={() => setSelectedType(type)}
+              className={`px-2 py-2 text-xs font-Prompt rounded-lg transition-all duration-300 ${
+                selectedType === type
+                  ? "bg-gray-400 shadow-lg scale-105"
+                  : "bg-gray-200 hover:bg-gray-500 hover:scale-105"
+              }`}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
       </div>
 
       <Drawer
@@ -312,14 +384,14 @@ const Map: React.FC = () => {
         placement="right"
         onClose={closeDrawer}
         open={open}
-        width={600}
+        width={450}
       >
         {selectedProperty && (
           <div>
-            <div className="absolute bg-slate-200 rounded-full w-14 h-14 flex justify-center items-center ml-[480px] mt-3">
+            <div className="absolute bg-slate-200 rounded-full w-10 h-10 flex justify-center items-center ml-[350px] mt-3">
               <Popover
                 title={
-                  <div className="font-Prompt ml-2 mt-2 text-lg text-zinc-600">
+                  <div className="font-Prompt text-center -mb-2 text-sm text-zinc-600">
                     เพิ่มรายการโปรดแล้ว!
                   </div>
                 }
@@ -331,7 +403,7 @@ const Map: React.FC = () => {
               >
                 <div
                   key={selectedProperty.รหัสทรัพย์}
-                  className="text-4xl "
+                  className="text-xl "
                   onClick={(e) =>
                     handleFavoriteClick(e, selectedProperty.รหัสทรัพย์)
                   }
@@ -358,8 +430,8 @@ const Map: React.FC = () => {
                     )
                   }
                   style={{
-                    width: "100%",
-                    height: "350px",
+                    width: "400px",
+                    height: "200px",
                     objectFit: "cover",
                     borderRadius: "8px",
                     marginBottom: "10px",
@@ -369,34 +441,34 @@ const Map: React.FC = () => {
 
             {/*ข้อมูลอสังหาริมทรัพย์*/}
             <div className="text-gray-600 font-Prompt">
-              <p className="text-4xl mt-5 font-bold">
+              <p className="text-xl mt-5 font-bold">
                 {selectedProperty.ชื่ออสังหาริมทรัพย์}
               </p>
-              <p className="text-2xl mt-4">฿ {selectedProperty.ราคา}</p>
+              <p className="text-lg mt-4">฿ {selectedProperty.ราคา}</p>
 
-              <div className="flex mt-5 text-lg">
-                <div className="flex gap-3">
-                  <img src={ruler} className="h-8" />
+              <div className="flex mt-5 text-xs">
+                <div className="flex gap-2">
+                  <img src={ruler} className="h-5" />
                   <p className="mt-1">{selectedProperty.ขนาดพื้นที่}</p>
                 </div>
-                <div className="flex ml-5 gap-3">
-                  <img src={bedroom} className="h-8" />
+                <div className="flex ml-5 gap-2">
+                  <img src={bedroom} className="h-5" />
                   <p className="mt-1">{selectedProperty.ห้องนอน}</p>
                 </div>
-                <div className="flex ml-5 gap-3">
-                  <img src={bathtub} className="h-8" />
+                <div className="flex ml-5 gap-2">
+                  <img src={bathtub} className="h-5" />
                   <p className="mt-1">{selectedProperty.ห้องน้ำ}</p>
                 </div>
               </div>
 
-              <p className="text-lg mt-3">{selectedProperty.เกี่ยวกับ}</p>
-              <p className="text-base mt-3">{selectedProperty.ประเภท}</p>
+              <p className="text-sm mt-3">{selectedProperty.เกี่ยวกับ}</p>
+              <p className="text-sm mt-3">{selectedProperty.ประเภท}</p>
               <div className="absolute bottom-5">
                 <Link
                   to={`/properties/${selectedProperty.รหัสทรัพย์}`}
                   key={selectedProperty.รหัสทรัพย์}
                 >
-                  <button className="bg-slate-300 hover:bg-slate-400 text-base w-20 h-10 rounded-xl">
+                  <button className="bg-slate-300 hover:bg-slate-400 text-sm w-16 h-8 rounded-xl">
                     เพิ่มเติม
                   </button>
                 </Link>
