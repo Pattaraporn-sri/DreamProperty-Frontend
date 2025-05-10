@@ -26,14 +26,14 @@ const Map: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<string>("ทั้งหมด");
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
-  const [markers, setMarkers] = useState<maplibregl.Marker[]>([]);
+  const [, setMarkers] = useState<maplibregl.Marker[]>([]);
   const [open, setOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(
     null
   ); //ข้อมูลที่เลือก
   const { favorites, toggleFavorite } = useFavorites(); // สถานะเพื่อเช็คว่ากดหรือไม่
   const [openPopoverId, setOpenPopoverId] = useState<string | null>(null); // ใช้ string แทน boolean
-  const [tooltip, setTooltip] = useState<maplibregl.Popup | null>(null);
+  const [, setTooltip] = useState<maplibregl.Popup | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // ใช้ ref เก็บ div
   const [activeStyle, setActiveStyle] = useState(Object.keys(baseMaps)[0]); // ใช้สำหรับเปลี่ยนสไตล์แผนที่
   const [map, setMap] = useState<maplibregl.Map | null>(null); // ใช้สำหรับเปลี่ยนสไตล์แผนที่

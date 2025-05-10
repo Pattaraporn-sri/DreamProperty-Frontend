@@ -15,7 +15,7 @@ import FavoritePage from "./component/FavoritePage";
 import { FavoriteProvider } from "./component/FavoriteContext";
 import AgentList from "./component/AgentList";
 import Compare from "./component/Compare";
-import { MapProvider } from "react-map-gl";
+
 
 const App = () => {
   return (

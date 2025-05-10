@@ -57,7 +57,7 @@ const Compare: React.FC = () => {
       dataIndex: "ชื่ออสังหาริมทรัพย์",
       key: "ชื่ออสังหาริมทรัพย์",
       className: "font-Prompt",
-      render: (_, record: Property) => (
+      render: (_: any, record: Property) => (
         <Link to={`/properties/${record.รหัสทรัพย์}`}>
           <div className="truncate w-[500px] text-sm ml-5">
             {record.ชื่ออสังหาริมทรัพย์}
